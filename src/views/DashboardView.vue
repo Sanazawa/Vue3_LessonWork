@@ -1,7 +1,15 @@
-<template>Dashboard</template>
+<template>
+  <Navbar></Navbar>
+  <router-view />
+</template>
 
 <script>
+import Navbar from '../components/DashboardNavbar.vue';
+
 export default {
+  components: {
+    Navbar,
+  },
   created() {
     const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1');
     console.log('token:', token);
@@ -12,7 +20,7 @@ export default {
     this.$http.post(api, this.user).then((res) => {
       console.log(res);
       if (!res.data.success) {
-        this.$router.push('login');
+        this.$router.push('/login');
       }
     });
   },
