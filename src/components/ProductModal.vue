@@ -30,19 +30,29 @@
                     class="form-control"
                     id="image"
                     placeholder="請輸入圖片連結"
-                    v-model="tempProduct.image"
+                    v-model="tempProduct.imageUrl"
                   />
                   輸入圖片網址
                 </label>
               </div>
               <div class="mb-3">
                 <label for="customFile" class="form-label">
-                  <input type="file" id="customFile" class="form-control" />
+                  <input
+                    type="file"
+                    id="customFile"
+                    class="form-control"
+                    ref="fileInput"
+                    @change="uploadFile"
+                  />
                   或 上傳圖片
                   <i class="fas fa-spinner fa-spin"></i>
                 </label>
               </div>
-              <img class="img-fluid" alt="" />
+              <img
+                class="img-fluid"
+                :src="tempProduct.imageUrl"
+                alt=""
+              />
               <!-- 延伸技巧，多圖 -->
               <div class="mt-5">
                 <div class="mb-3 input-group">
@@ -221,6 +231,20 @@ export default {
     },
     hideModal() {
       this.modal.hide();
+    },
+    uploadFile() {
+      const uploadedFile = this.$refs.fileInput.files[0];
+      // console.dir(uploadedFile);
+      const formData = new FormData();
+      formData.append('file-to-upload', uploadedFile);
+
+      const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/upload`;
+      this.$http.post(url, formData).then((res) => {
+        console.log(res.data);
+        if (res.data.success) {
+          this.tempProduct.imageUrl = res.data.imageUrl;
+        }
+      });
     },
   },
   mounted() {
