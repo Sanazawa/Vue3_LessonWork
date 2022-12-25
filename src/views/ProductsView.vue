@@ -32,7 +32,10 @@
               @click="openModal(false, item)"
             >
               編輯</button>
-            <button class="btn btn-outline-danger btn-sm">
+            <button
+              class="btn btn-outline-danger btn-sm"
+              @click="openDelModal(item)"
+            >
               刪除</button>
           </div>
         </td>
@@ -44,10 +47,16 @@
     :product="tempProduct"
     @update-product="updateProduct"
   ></ProductModal>
+  <DelModal
+    ref="delModal"
+    :item="tempProduct"
+    @del-product="delProduct"
+  ></DelModal>
 </template>
 
 <script>
 import ProductModal from '../components/ProductModal.vue';
+import DelModal from '../components/DelModal.vue';
 
 export default {
   data() {
@@ -67,6 +76,7 @@ export default {
         this.pagination = res.data.pagination;
       });
     },
+    // Modal
     openModal(isNew, item) {
       if (isNew) {
         this.tempProduct = {};
@@ -78,29 +88,46 @@ export default {
       const productComponent = this.$refs.productModal;
       productComponent.showModal();
     },
+    openDelModal(item) {
+      this.tempProduct = { ...item };
+      const delComponent = this.$refs.delModal;
+      delComponent.showModal();
+    },
+    // API Data Update
     updateProduct(item) {
       this.tempProduct = item;
 
       // 新增
-      let api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
+      let url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
       let httpMethod = 'post';
 
       // 修改
       if (!this.isNew) {
-        api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${item.id}`;
+        url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${item.id}`;
         httpMethod = 'put';
       }
 
       const productComponent = this.$refs.productModal;
-      this.$http[httpMethod](api, { data: this.tempProduct }).then((res) => {
+      this.$http[httpMethod](url, { data: this.tempProduct }).then((res) => {
         console.log(res);
         productComponent.hideModal();
+        this.getProducts();
+      });
+    },
+    delProduct() {
+      const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${this.tempProduct.id}`;
+      const delComponent = this.$refs.delModal;
+
+      this.$http.delete(url).then((res) => {
+        console.log(res);
+        delComponent.hideModal();
         this.getProducts();
       });
     },
   },
   components: {
     ProductModal,
+    DelModal,
   },
   created() {
     this.getProducts();
