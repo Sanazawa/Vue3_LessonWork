@@ -1,7 +1,7 @@
 <template>
+  <PageLoading :active="isLoading"></PageLoading>
   <div class="container mt-5">
-    <form class="row justify-content-center"
-    @submit.prevent="sighIn">
+    <form class="row justify-content-center" @submit.prevent="sighIn">
       <div class="col-md-6">
         <h1 class="h3 mb-3 font-weight-normal">請先登入</h1>
         <div class="mb-2">
@@ -32,9 +32,7 @@
         </div>
 
         <div class="text-end mt-4">
-          <button class="btn btn-lg btn-primary btn-block" type="submit">
-            登入
-          </button>
+          <button class="btn btn-lg btn-primary btn-block" type="submit">登入</button>
         </div>
       </div>
     </form>
@@ -49,20 +47,22 @@ export default {
         username: '',
         password: '',
       },
+      isLoading: false,
     };
   },
   methods: {
     sighIn() {
       const api = `${process.env.VUE_APP_API}admin/signin`;
-      console.log(api);
-      this.$http.post(api, this.user)
-        .then((res) => {
-          if (res.data.success) {
-            const { token, expired } = res.data;
-            document.cookie = `hexToken=${token}; expires=${new Date(expired)}`;
-            this.$router.push('/dashboard/products');
-          }
-        });
+      this.isLoading = true;
+
+      this.$http.post(api, this.user).then((res) => {
+        if (res.data.success) {
+          this.isLoading = false;
+          const { token, expired } = res.data;
+          document.cookie = `hexToken=${token}; expires=${new Date(expired)}`;
+          this.$router.push('/dashboard/products');
+        }
+      });
     },
   },
 };

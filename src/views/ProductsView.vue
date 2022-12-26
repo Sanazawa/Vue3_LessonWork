@@ -1,8 +1,9 @@
 <template>
+  <PageLoading :active="isLoading"></PageLoading>
   <div class="text-end">
-    <button class="btn btn-primary" type="button"
-    @click.prevent="openModal(true)"
-    >增加一個產品</button>
+    <button class="btn btn-primary" type="button" @click.prevent="openModal(true)">
+      增加一個產品
+    </button>
   </div>
   <table class="table mt-4">
     <thead>
@@ -27,16 +28,10 @@
         </td>
         <td>
           <div class="btn-group">
-            <button
-              class="btn btn-outline-primary btn-sm"
-              @click="openModal(false, item)"
-            >
-              編輯</button>
-            <button
-              class="btn btn-outline-danger btn-sm"
-              @click="openDelModal(item)"
-            >
-              刪除</button>
+            <button class="btn btn-outline-primary btn-sm" @click="openModal(false, item)">
+              編輯
+            </button>
+            <button class="btn btn-outline-danger btn-sm" @click="openDelModal(item)">刪除</button>
           </div>
         </td>
       </tr>
@@ -47,11 +42,7 @@
     :product="tempProduct"
     @update-product="updateProduct"
   ></ProductModal>
-  <DelModal
-    ref="delModal"
-    :item="tempProduct"
-    @del-product="delProduct"
-  ></DelModal>
+  <DelModal ref="delModal" :item="tempProduct" @del-product="delProduct"></DelModal>
 </template>
 
 <script>
@@ -65,12 +56,15 @@ export default {
       pagination: {},
       tempProduct: {},
       isNew: false,
+      isLoading: false,
     };
   },
   methods: {
     getProducts() {
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products`;
+      this.isLoading = true;
       this.$http.get(api, this.user).then((res) => {
+        this.isLoading = false;
         console.log(res.data);
         this.products = res.data.products;
         this.pagination = res.data.pagination;
