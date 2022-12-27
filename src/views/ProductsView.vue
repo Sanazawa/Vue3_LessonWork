@@ -59,6 +59,11 @@ export default {
       isLoading: false,
     };
   },
+  components: {
+    ProductModal,
+    DelModal,
+  },
+  inject: ['emitter'],
   methods: {
     getProducts() {
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products`;
@@ -104,8 +109,21 @@ export default {
       const productComponent = this.$refs.productModal;
       this.$http[httpMethod](url, { data: this.tempProduct }).then((res) => {
         console.log(res);
+
+        if (res.data.success) {
+          this.getProducts();
+          this.emitter.emit('push-message', {
+            style: 'success',
+            title: '更新成功',
+          });
+        } else {
+          this.emitter.emit('push-message', {
+            style: 'danger',
+            tile: '更新失敗',
+            content: res.data.message.join('、'),
+          });
+        }
         productComponent.hideModal();
-        this.getProducts();
       });
     },
     delProduct() {
@@ -118,10 +136,6 @@ export default {
         this.getProducts();
       });
     },
-  },
-  components: {
-    ProductModal,
-    DelModal,
   },
   created() {
     this.getProducts();
