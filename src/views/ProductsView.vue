@@ -119,7 +119,7 @@ export default {
         } else {
           this.emitter.emit('push-message', {
             style: 'danger',
-            tile: '更新失敗',
+            title: '更新失敗',
             content: res.data.message.join('、'),
           });
         }
