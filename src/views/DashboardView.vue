@@ -31,6 +31,11 @@ export default {
       console.log(res);
       if (!res.data.success) {
         this.$router.push('/login');
+      } else {
+        emitter.emit('push-message', {
+          style: 'success',
+          title: '登入成功',
+        });
       }
     });
   },

@@ -57,11 +57,14 @@ export default {
 
       this.$http.post(api, this.user).then((res) => {
         if (res.data.success) {
-          this.isLoading = false;
           const { token, expired } = res.data;
           document.cookie = `hexToken=${token}; expires=${new Date(expired)}`;
           this.$router.push('/dashboard/products');
+        } else {
+          this.user.username = '';
+          this.user.password = '';
         }
+        this.isLoading = false;
       });
     },
   },
