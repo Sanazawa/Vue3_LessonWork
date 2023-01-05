@@ -1,8 +1,8 @@
 <template>
   <PageLoading :active="isLoading"></PageLoading>
-  <nav class="navbar navbar-expand-lg bg-light">
+  <nav class="navbar navbar-expand-lg bg-light bg-body-tertiary">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Navbar</a>
+      <a class="navbar-brand" href="#">表單試作</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -17,10 +17,20 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
+            <router-link
+              to="/dashboard/products"
+              class="nav-link"
+              aria-current="page"
+              :class="{ active: this.$route.path === '/dashboard/products' }"
+            >
+              產品
+            </router-link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Features</a>
+            <router-link to="/dashboard/products" class="nav-link">訂單</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/dashboard/products" class="nav-link">優惠券</router-link>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" @click.prevent="logout">登出</a>
@@ -50,6 +60,12 @@ export default {
         }
       });
     },
+    thisPage() {
+      console.log(this.$route);
+    },
+  },
+  mounted() {
+    this.thisPage();
   },
 };
 </script>

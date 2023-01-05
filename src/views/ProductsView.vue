@@ -70,7 +70,7 @@ export default {
     DelModal,
     Pagination,
   },
-  inject: ['emitter'],
+  inject: ['$httpMessageState'],
   methods: {
     // currency,  //如果只宣告區域就請加在這裡
     getProducts(page = 1) {
@@ -107,30 +107,20 @@ export default {
       // 新增
       let url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product`;
       let httpMethod = 'post';
+      let toastTitle = '新增產品資訊';
 
       // 修改
       if (!this.isNew) {
         url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${item.id}`;
         httpMethod = 'put';
+        toastTitle = '更新產品資訊';
       }
 
       const productComponent = this.$refs.productModal;
       this.$http[httpMethod](url, { data: this.tempProduct }).then((res) => {
         console.log(res);
-
-        if (res.data.success) {
-          this.getProducts();
-          this.emitter.emit('push-message', {
-            style: 'success',
-            title: '更新成功',
-          });
-        } else {
-          this.emitter.emit('push-message', {
-            style: 'danger',
-            title: '更新失敗',
-            content: res.data.message.join('、'),
-          });
-        }
+        this.getProducts();
+        this.$httpMessageState(res, toastTitle);
         productComponent.hideModal();
       });
     },
@@ -140,8 +130,9 @@ export default {
 
       this.$http.delete(url).then((res) => {
         console.log(res);
-        delComponent.hideModal();
         this.getProducts();
+        this.$httpMessageState(res, '刪除產品資訊');
+        delComponent.hideModal();
       });
     },
   },
