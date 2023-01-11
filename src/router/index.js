@@ -39,6 +39,20 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/user',
+    component: () => import('../views/UserBoardView.vue'),
+    children: [
+      {
+        path: 'cart',
+        component: () => import('../views/UserCart.vue'),
+      },
+      {
+        path: 'product/:productId',
+        component: '',
+      },
+    ],
+  },
 ];
 
 const router = createRouter({
