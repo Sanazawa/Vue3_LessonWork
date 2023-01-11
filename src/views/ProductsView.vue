@@ -46,7 +46,7 @@
     :product="tempProduct"
     @update-product="updateProduct"
   ></ProductModal>
-  <DelModal ref="delModal" :item="tempProduct" @del-product="delProduct"></DelModal>
+  <DelModal ref="delModal" :item="tempProduct" @del-component="delProduct"></DelModal>
 </template>
 
 <script>
@@ -79,6 +79,10 @@ export default {
       this.$http.get(api, this.user).then((res) => {
         this.isLoading = false;
         console.log(res.data);
+        if (!res.data.success) {
+          const toastTitle = '取得產品資訊';
+          this.$httpMessageState(res, toastTitle);
+        }
         this.products = res.data.products;
         this.pagination = res.data.pagination;
       });

@@ -27,10 +27,24 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/dashboard/products" class="nav-link">訂單</router-link>
+            <router-link
+              to="/dashboard/orders"
+              class="nav-link"
+              aria-current="page"
+              :class="{ active: this.$route.path === '/dashboard/orders' }"
+            >
+              訂單
+            </router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/dashboard/products" class="nav-link">優惠券</router-link>
+            <router-link
+              to="/dashboard/coupons"
+              class="nav-link"
+              aria-current="page"
+              :class="{ active: this.$route.path === '/dashboard/coupons' }"
+            >
+              優惠券
+            </router-link>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" @click.prevent="logout">登出</a>

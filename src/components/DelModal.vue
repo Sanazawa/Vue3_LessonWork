@@ -15,7 +15,7 @@
           </h5>
           <button
             type="button"
-            class="btn-close"
+            class="btn-close-white btn-close"
             data-bs-dismiss="modal"
             aria-label="Close"
           ></button>
@@ -37,7 +37,7 @@
           <button
             type="button"
             class="btn btn-danger"
-            @click="$emit('del-product')"
+            @click="$emit('del-component')"
           >
             確認刪除
           </button>
