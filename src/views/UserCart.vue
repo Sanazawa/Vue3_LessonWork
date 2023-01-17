@@ -12,7 +12,12 @@
       </thead>
       <tbody class="table-group-divider">
         <tr v-for="item in products" :key="item.id">
-          <th>1</th>
+          <td style="width: 100px">
+            <div
+              style="height: 100px; background-size: cover; background-position: center"
+              :style="{backgroundImage: `url(${item.imageUrl})`}"
+            ></div>
+          </td>
           <td>{{ item.title }}</td>
           <td>{{ `${item.price} 元` }}</td>
           <td>
@@ -21,7 +26,19 @@
                 class="btn btn-outline-primary btn-sm"
                 @click.prevent="getProduct(item.id)"
               >查看更多</button>
-              <button class="btn btn-outline-danger btn-sm">加入購物車</button>
+              <button
+                class="btn btn-outline-danger btn-sm"
+                @click.prevent="addCart(item.id)"
+                :disabled="status.loadingItem === item.id"
+              >
+                <span
+                  v-if="status.loadingItem === item.id"
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                加入購物車
+              </button>
             </div>
           </td>
         </tr>
@@ -43,6 +60,9 @@ export default {
       products: [],
       pagination: {},
       isLoading: false,
+      status: {
+        loadingItem: '',
+      },
     };
   },
   components: {
@@ -50,9 +70,9 @@ export default {
   },
   methods: {
     getProducts(page = 1) {
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/products?page=${page}`;
+      const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/products?page=${page}`;
       this.isLoading = true;
-      this.$http.get(api).then((res) => {
+      this.$http.get(url).then((res) => {
         this.products = res.data.products;
         this.pagination = res.data.pagination;
         this.isLoading = false;
@@ -60,6 +80,19 @@ export default {
     },
     getProduct(id) {
       this.$router.push(`/user/product/${id}`);
+    },
+    addCart(id) {
+      const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
+      this.status.loadingItem = id;
+      const cart = {
+        product_id: id,
+        qty: 1,
+      };
+
+      this.$http.post(url, { data: cart }).then((res) => {
+        console.log(res);
+        this.status.loadingItem = '';
+      });
     },
   },
   created() {

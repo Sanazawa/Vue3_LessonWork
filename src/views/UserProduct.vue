@@ -1,5 +1,6 @@
 <template>
-   <div class="container">
+  <PageLoading :active="isLoading"></PageLoading>
+  <div class="container">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><router-link to="/user/cart">購物車</router-link></li>
@@ -32,15 +33,18 @@ export default {
     return {
       productId: '',
       product: {},
+      isLoading: false,
     };
   },
   methods: {
     getProductInfo() {
+      this.isLoading = true;
       this.productId = this.$route.params.id;
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/product/${this.productId}`;
 
       this.$http.get(api).then((res) => {
         this.product = res.data.product;
+        this.isLoading = false;
       });
     },
   },
