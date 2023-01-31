@@ -5,6 +5,7 @@ import VueAxios from 'vue-axios';
 import Loading from 'vue3-loading-overlay';
 import 'vue3-loading-overlay/dist/vue3-loading-overlay.css';
 import $httpMessageState from './methods/pushMessageState';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 import App from './App.vue';
 import router from './router';
