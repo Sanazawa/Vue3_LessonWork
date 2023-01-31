@@ -19,7 +19,18 @@
         <del class="h6" v-if="product.price">原價 {{ product.origin_price }} 元</del>
         <div class="h5" v-if="product.price">現在只要 {{ product.price }} 元</div>
         <hr>
-        <button type="button" class="btn btn-outline-danger">
+        <button
+          type="button"
+          class="btn btn-outline-danger"
+          @click.prevent="addCart(product.id)"
+          :disabled="status.loadingItem === product.id"
+        >
+          <span
+            v-if="status.loadingItem === product.id"
+            class="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
           加到購物車
         </button>
       </div>
@@ -34,6 +45,9 @@ export default {
       productId: '',
       product: {},
       isLoading: false,
+      status: {
+        loadingItem: '',
+      },
     };
   },
   methods: {
@@ -45,6 +59,19 @@ export default {
       this.$http.get(api).then((res) => {
         this.product = res.data.product;
         this.isLoading = false;
+      });
+    },
+    addCart(id) {
+      const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
+      const cart = {
+        product_id: id,
+        qty: 1,
+      };
+
+      this.status.loadingItem = id;
+      this.$http.post(url, { data: cart }).then((res) => {
+        console.log(res);
+        this.status.loadingItem = '';
       });
     },
   },
