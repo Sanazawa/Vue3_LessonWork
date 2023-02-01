@@ -64,7 +64,21 @@
           <tbody>
             <tr v-for="item in carts" :key="item.id">
               <td>{{ item.product.title }}</td>
-              <td>{{ item.qty }} / {{item.product.unit}}</td>
+              <td style="width:100px">
+                <div class="input-group input-group-sm mb-3">
+                  <input
+                    type="number"
+                    class="form-control"
+                    :aria-label="`${item.id}_unit`"
+                    aria-describedby="inputGroup-sizing-sm"
+                    v-model="item.qty"
+                  />
+                  <span
+                    class="input-group-text"
+                    :id="`${item.id}_unit`"
+                  >{{ item.product.unit }}</span>
+                </div>
+              </td>
               <td>{{ item.total }}</td>
               <td>
                 <button class="btn btn-outline-danger btn-sm">
