@@ -63,7 +63,10 @@
           </thead>
           <tbody class="table-group-divider">
             <tr v-for="item in carts" :key="item.id">
-              <td>{{ item.product.title }}</td>
+              <td>
+                <div>{{ item.product.title }}</div>
+                <div class="fs-6 text-success" v-if="item.coupon">已套用優惠券</div>
+              </td>
               <td style="width:120px">
                 <div class="input-group input-group-sm mb-3">
                   <input
@@ -82,7 +85,9 @@
                   >{{ `/ ${item.product.unit}` }}</span>
                 </div>
               </td>
-              <td>{{ item.total }}</td>
+              <td>
+                <div class="fs-6 text-success" v-if="item.coupon">折扣價：</div>{{ item.final_total }}
+              </td>
               <td>
                 <button class="btn btn-outline-danger btn-sm">
                   <i class="bi bi-x-lg"></i>
@@ -90,14 +95,43 @@
               </td>
             </tr>
           </tbody>
-          <tfoot>
+          <tfoot class="table-group-divider">
             <tr>
               <td></td>
-              <td>金額總計</td>
-              <td>{{ cartsTotal.total }}</td>
+              <td>
+                金額總計
+                <div
+                  v-if="cartsTotal.final_total < cartsTotal.total"
+                  class="fs-6 text-success"
+                >折扣價：</div>
+              </td>
+              <td>
+                {{ `${cartsTotal.total} 元` }}
+                <div
+                  v-if="cartsTotal.final_total < cartsTotal.total"
+                  class="fs-6 text-success"
+                >{{ cartsTotal.final_total }}</div>
+              </td>
+              <td></td>
             </tr>
           </tfoot>
         </table>
+        <div class="input-group mb-3">
+          <input
+            type="text"
+            class="form-control"
+            aria-label="請輸入優惠代碼"
+            placeholder="請輸入優惠代碼"
+            aria-describedby="button-coupon"
+            v-model="coupon_code"
+          />
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            id="button-coupon"
+            @click="useCoupon"
+          >使用優惠代碼</button>
+        </div>
       </div>
     </div>
   </div>
@@ -113,6 +147,7 @@ export default {
       carts: [],
       cartsTotal: [],
       pagination: {},
+      coupon_code: '',
       isLoading: false,
       status: {
         loadingItem: '',
@@ -145,6 +180,7 @@ export default {
           total: res.data.data.total,
         };
         this.isLoading = false;
+        console.log(res);
       });
     },
     addCart(id) {
@@ -173,6 +209,17 @@ export default {
         console.log(res);
         this.getCartList();
         this.status.loadingItem = '';
+      });
+    },
+    useCoupon() {
+      const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/coupon`;
+      const coupon = {
+        code: this.coupon_code,
+      };
+
+      this.$http.post(url, { data: coupon }).then((res) => {
+        console.log(res);
+        this.getCartList();
       });
     },
   },
