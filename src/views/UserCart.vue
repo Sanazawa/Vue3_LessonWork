@@ -56,27 +56,30 @@
         <table class="table">
           <thead>
             <tr>
-              <td>品名</td>
-              <td>數量</td>
-              <td>單價</td>
+              <th scope="col">品名</th>
+              <th scope="col">數量</th>
+              <th scope="col">單價</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="table-group-divider">
             <tr v-for="item in carts" :key="item.id">
               <td>{{ item.product.title }}</td>
-              <td style="width:100px">
+              <td style="width:120px">
                 <div class="input-group input-group-sm mb-3">
                   <input
                     type="number"
+                    min="1"
+                    :disabled="item.id === status.loadingItem"
                     class="form-control"
                     :aria-label="`${item.id}_unit`"
                     aria-describedby="inputGroup-sizing-sm"
                     v-model="item.qty"
+                    @change="updateCart(item)"
                   />
                   <span
                     class="input-group-text"
                     :id="`${item.id}_unit`"
-                  >{{ item.product.unit }}</span>
+                  >{{ `/ ${item.product.unit}` }}</span>
                 </div>
               </td>
               <td>{{ item.total }}</td>
@@ -87,6 +90,13 @@
               </td>
             </tr>
           </tbody>
+          <tfoot>
+            <tr>
+              <td></td>
+              <td>金額總計</td>
+              <td>{{ cartsTotal.total }}</td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     </div>
@@ -101,6 +111,7 @@ export default {
     return {
       products: [],
       carts: [],
+      cartsTotal: [],
       pagination: {},
       isLoading: false,
       status: {
@@ -126,8 +137,14 @@ export default {
     },
     getCartList() {
       const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart`;
+      this.isLoading = true;
       this.$http.get(url).then((res) => {
         this.carts = res.data.data.carts;
+        this.cartsTotal = {
+          final_total: res.data.data.final_total,
+          total: res.data.data.total,
+        };
+        this.isLoading = false;
       });
     },
     addCart(id) {
@@ -142,6 +159,20 @@ export default {
         console.log(res);
         this.status.loadingItem = '';
         this.getCartList();
+      });
+    },
+    updateCart(item) {
+      const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/cart/${item.id}`;
+      const cart = {
+        product_id: item.product_id,
+        qty: item.qty,
+      };
+
+      this.status.loadingItem = item.id;
+      this.$http.put(url, { data: cart }).then((res) => {
+        console.log(res);
+        this.getCartList();
+        this.status.loadingItem = '';
       });
     },
   },
