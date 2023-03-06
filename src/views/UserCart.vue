@@ -17,7 +17,7 @@
               <td style="width: 100px">
                 <div
                   style="height: 100px; background-size: cover; background-position: center"
-                  :style="{backgroundImage: `url(${item.imageUrl})`}"
+                  :style="{ backgroundImage: `url(${item.imageUrl})` }"
                 ></div>
               </td>
               <td>{{ item.title }}</td>
@@ -27,7 +27,9 @@
                   <button
                     class="btn btn-outline-primary btn-sm"
                     @click.prevent="getProduct(item.id)"
-                  >查看更多</button>
+                  >
+                    查看更多
+                  </button>
                   <button
                     class="btn btn-outline-danger btn-sm"
                     @click.prevent="addCart(item.id)"
@@ -46,10 +48,7 @@
             </tr>
           </tbody>
         </table>
-        <Pagination
-          :pages="pagination"
-          @emit-pages="getProducts"
-        ></Pagination>
+        <Pagination :pages="pagination" @emit-pages="getProducts"></Pagination>
       </div>
       <div class="col-4">
         <h4>購物車</h4>
@@ -67,7 +66,7 @@
                 <div>{{ item.product.title }}</div>
                 <div class="fs-6 text-success" v-if="item.coupon">已套用優惠券</div>
               </td>
-              <td style="width:120px">
+              <td style="width: 120px">
                 <div class="input-group input-group-sm mb-3">
                   <input
                     type="number"
@@ -79,14 +78,14 @@
                     v-model="item.qty"
                     @change="updateCart(item)"
                   />
-                  <span
-                    class="input-group-text"
-                    :id="`${item.id}_unit`"
-                  >{{ `/ ${item.product.unit}` }}</span>
+                  <span class="input-group-text" :id="`${item.id}_unit`">{{
+                    `/ ${item.product.unit}`
+                  }}</span>
                 </div>
               </td>
               <td>
-                <div class="fs-6 text-success" v-if="item.coupon">折扣價：</div>{{ item.final_total }}
+                <div class="fs-6 text-success" v-if="item.coupon">折扣價：</div>
+                {{ item.final_total }}
               </td>
               <td>
                 <button class="btn btn-outline-danger btn-sm">
@@ -100,17 +99,15 @@
               <td></td>
               <td>
                 金額總計
-                <div
-                  v-if="cartsTotal.final_total < cartsTotal.total"
-                  class="fs-6 text-success"
-                >折扣價：</div>
+                <div v-if="cartsTotal.final_total < cartsTotal.total" class="fs-6 text-success">
+                  折扣價：
+                </div>
               </td>
               <td>
                 {{ `${cartsTotal.total} 元` }}
-                <div
-                  v-if="cartsTotal.final_total < cartsTotal.total"
-                  class="fs-6 text-success"
-                >{{ cartsTotal.final_total }}</div>
+                <div v-if="cartsTotal.final_total < cartsTotal.total" class="fs-6 text-success">
+                  {{ cartsTotal.final_total }}
+                </div>
               </td>
               <td></td>
             </tr>
@@ -130,8 +127,97 @@
             class="btn btn-outline-secondary"
             id="button-coupon"
             @click="useCoupon"
-          >使用優惠代碼</button>
+          >
+            使用優惠代碼
+          </button>
         </div>
+      </div>
+      <hr />
+
+      <div class="my-5 row justify-content-center">
+        <v-form class="col-md-6" v-slot="{ errors, validate }" @submit="onSubmit">
+          {{ errors }}
+
+          <div class="mb-3">
+            <span for="name" class="form-label"
+              >電子信箱
+              <v-field
+                id="email"
+                name="電子信箱"
+                type="text"
+                class="form-control"
+                :class="{ 'is-invalid' : errors['電子信箱'] }"
+                placeholder="請輸入電子信箱"
+                rules="required|email"
+                v-model="user.email"
+              ></v-field>
+              <error-message name="電子信箱" class="invalid-feedback"></error-message>
+            </span>
+          </div>
+          <div class="mb-3">
+            <span for="name" class="form-label"
+              >收件人姓名
+              <v-field
+                id="name"
+                name="姓名"
+                type="text"
+                class="form-control"
+                :class="{ 'is-invalid' : errors['姓名'] }"
+                placeholder="請輸入名字"
+                rules="required"
+                v-model="user.name"
+              ></v-field>
+              <error-message name="姓名" class="invalid-feedback"></error-message>
+            </span>
+          </div>
+          <div class="mb-3">
+            <span for="phone" class="form-label"
+              >收件人電話
+              <v-field
+                id="phone"
+                name="電話"
+                type="text"
+                class="form-control"
+                :class="{ 'is-invalid' : errors['電話'] }"
+                placeholder="請輸入電話"
+                rules="required"
+                v-model="user.phone"
+              ></v-field>
+              <error-message name="電話" class="invalid-feedback"></error-message>
+            </span>
+          </div>
+          <div class="mb-3">
+            <span for="address" class="form-label"
+              >收件人地址
+              <v-field
+                id="address"
+                name="地址"
+                type="text"
+                class="form-control"
+                :class="{ 'is-invalid' : errors['地址'] }"
+                placeholder="請輸入地址"
+                rules="required"
+                v-model="user.address"
+              ></v-field>
+              <error-message name="地址" class="invalid-feedback"></error-message>
+            </span>
+          </div>
+          <div class="mb-3">
+            <label for="noted" class="form-label"
+              >備註
+              <textarea
+                id="noted"
+                type="text"
+                class="form-control"
+                cols="50" rows="10"
+                v-model="user.noted">
+              </textarea>
+            </label>
+          </div>
+          <button class="btn me-2 btn-outline-primary" type="button" @click="validate">驗證</button>
+
+          <button class="btn btn-primary" type="submit">Submit</button>
+        </v-form>
       </div>
     </div>
   </div>
@@ -152,6 +238,7 @@ export default {
       status: {
         loadingItem: '',
       },
+      user: {},
     };
   },
   components: {
@@ -221,6 +308,9 @@ export default {
         console.log(res);
         this.getCartList();
       });
+    },
+    onSubmit() {
+      console.log(this.user);
     },
   },
   created() {
