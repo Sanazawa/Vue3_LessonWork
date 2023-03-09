@@ -135,7 +135,7 @@
       <hr />
 
       <div class="my-5 row justify-content-center">
-        <v-form class="col-md-6" v-slot="{ errors, validate }" @submit="onSubmit">
+        <v-form class="col-md-6" v-slot="{ errors }" @submit="createOrder">
           {{ errors }}
 
           <div class="mb-3">
@@ -149,7 +149,7 @@
                 :class="{ 'is-invalid' : errors['電子信箱'] }"
                 placeholder="請輸入電子信箱"
                 rules="required|email"
-                v-model="user.email"
+                v-model="form.user.email"
               ></v-field>
               <error-message name="電子信箱" class="invalid-feedback"></error-message>
             </span>
@@ -165,23 +165,23 @@
                 :class="{ 'is-invalid' : errors['姓名'] }"
                 placeholder="請輸入名字"
                 rules="required"
-                v-model="user.name"
+                v-model="form.user.name"
               ></v-field>
               <error-message name="姓名" class="invalid-feedback"></error-message>
             </span>
           </div>
           <div class="mb-3">
-            <span for="phone" class="form-label"
+            <span for="tel" class="form-label"
               >收件人電話
               <v-field
-                id="phone"
+                id="tel"
                 name="電話"
                 type="text"
                 class="form-control"
                 :class="{ 'is-invalid' : errors['電話'] }"
                 placeholder="請輸入電話"
                 rules="required"
-                v-model="user.phone"
+                v-model="form.user.tel"
               ></v-field>
               <error-message name="電話" class="invalid-feedback"></error-message>
             </span>
@@ -197,26 +197,24 @@
                 :class="{ 'is-invalid' : errors['地址'] }"
                 placeholder="請輸入地址"
                 rules="required"
-                v-model="user.address"
+                v-model="form.user.address"
               ></v-field>
               <error-message name="地址" class="invalid-feedback"></error-message>
             </span>
           </div>
           <div class="mb-3">
-            <label for="noted" class="form-label"
-              >備註
+            <label for="message" class="form-label"
+              >留言
               <textarea
-                id="noted"
+                id="message"
                 type="text"
                 class="form-control"
                 cols="50" rows="10"
-                v-model="user.noted">
+                v-model="form.message">
               </textarea>
             </label>
           </div>
-          <button class="btn me-2 btn-outline-primary" type="button" @click="validate">驗證</button>
-
-          <button class="btn btn-primary" type="submit">Submit</button>
+          <button class="btn btn-primary" type="submit">送出表單</button>
         </v-form>
       </div>
     </div>
@@ -238,7 +236,15 @@ export default {
       status: {
         loadingItem: '',
       },
-      user: {},
+      form: {
+        user: {
+          email: '',
+          name: '',
+          tel: '',
+          address: '',
+        },
+        message: '',
+      },
     };
   },
   components: {
@@ -309,8 +315,13 @@ export default {
         this.getCartList();
       });
     },
-    onSubmit() {
-      console.log(this.user);
+    createOrder() {
+      const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/order`;
+      const order = this.form;
+
+      this.$http.post(url, { data: order }).then((res) => {
+        console.log(res);
+      });
     },
   },
   created() {
