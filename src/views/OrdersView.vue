@@ -36,42 +36,68 @@
             >檢視</button>
             <button
               class="btn btn-outline-danger btn-sm"
-              @click.prevent="deleteOrder"
+              @click.prevent="openDelModal(item)"
             >刪除</button>
           </div>
         </td>
       </tr>
     </tbody>
   </table>
+  <Pagination
+    :pages="pagination"
+  ></Pagination>
   <OrderModal
     ref="orderModal"
     :order = "tempOrder"
   ></OrderModal>
+  <DelModal
+    ref="delModal"
+    :item="tempOrder"
+    @del-component="deleteOrder"
+  ></DelModal>
 </template>
 
 <script>
 import { date } from '../methods/filters';
 import OrderModal from '../components/OrderModal.vue';
+import DelModal from '../components/DelModal.vue';
+import Pagination from '../components/PaginationComponent.vue';
 
 export default {
   data() {
     return {
       orders: [],
       tempOrder: {},
+      pagination: {},
       isLoading: false,
       isNew: false,
     };
   },
   components: {
     OrderModal,
+    DelModal,
+    Pagination,
   },
+  inject: ['$httpMessageState'],
   methods: {
     date,
     getOrders() {
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/orders`;
       this.$http.get(api, this.user).then((res) => {
         this.orders = res.data.orders;
-        console.log(res.data.orders);
+        this.pagination = res.data.pagination;
+        console.log(res.data);
+      });
+    },
+    deleteOrder() {
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/order/${this.tempOrder.id}`;
+      const delComponent = this.$refs.delModal;
+
+      this.$http.delete(api).then((res) => {
+        console.log(res);
+        this.getOrders();
+        this.$httpMessageState(res, '刪除訂單');
+        delComponent.hideModal();
       });
     },
     openModal(isNew, item) {
@@ -85,8 +111,13 @@ export default {
       const OrderComponent = this.$refs.orderModal;
       OrderComponent.showModal();
     },
-    deleteOrder() {
-      console.log('刪除按鍵測試');
+    openDelModal(item) {
+      this.tempOrder = {
+        ...item,
+        title: `訂單 ${item.id}`,
+      };
+      const delComponent = this.$refs.delModal;
+      delComponent.showModal();
     },
   },
   created() {

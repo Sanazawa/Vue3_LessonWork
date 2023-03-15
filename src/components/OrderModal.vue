@@ -24,30 +24,42 @@
           <div class="row">
             <div class="col-sm-4">
               <div class="mb-3">
-                <h2>用戶資料</h2>
-                <table>
+                <h3>用戶資料</h3>
+                <table class="table table-group-divider table-hover mt-4">
                   <tr>
-                    <td>姓名</td>
+                    <th scope="row">姓名</th>
                     <td>
                       {{ tempOrder.user.name }}
                     </td>
                   </tr>
                   <tr>
-                    <td>Email</td>
+                    <th scope="row">Email</th>
                     <td>
                       {{ tempOrder.user.email }}
                     </td>
                   </tr>
                   <tr>
-                    <td>電話</td>
+                    <th scope="row">電話</th>
                     <td>
                       {{ tempOrder.user.tel }}
                     </td>
                   </tr>
                   <tr>
-                    <td>地址</td>
+                    <th scope="row">地址</th>
                     <td>
                       {{ tempOrder.user.address }}
+                    </td>
+                  </tr>
+                  <tr class="align-top">
+                    <th scope="row">客戶留言</th>
+                    <td>
+                      <textarea
+                        rows="5"
+                        style="width:250px;"
+                        class="form-control"
+                        :value="tempOrder.message"
+                        disabled
+                      ></textarea>
                     </td>
                   </tr>
                 </table>
@@ -55,8 +67,38 @@
             </div>
             <div class="col">
               <div class="mb-3">
-                <h2>訂單細節</h2>
-
+                <h3>訂單細節</h3>
+                <table class="table table-group-divider table-hover mt-4">
+                  <tr>
+                    <th scope="row">訂單編號</th>
+                    <td>{{ tempOrder.id }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">下單時間</th>
+                    <td>{{ date(tempOrder.create_at) }}</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">付款時間</th>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <th scope="row">付款狀態</th>
+                    <td v-if="tempOrder.is_paid">已付款</td>
+                    <td v-else>未付款</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">總金額</th>
+                    <td>{{ tempOrder.total }}</td>
+                  </tr>
+                </table>
+                <h3>選購商品</h3>
+                <table class="table table-group-divider table-hover mt-4">
+                  <tr v-for="(order, i) in tempOrder.products" :key="i">
+                    <th scope="row">{{ order.product.title }}</th>
+                    <td>{{ `${order.qty} / ${order.product.unit}` }}</td>
+                    <td class="text-end">{{ `${order.total} 元` }}</td>
+                  </tr>
+                </table>
               </div>
             </div>
           </div>
@@ -70,6 +112,7 @@
 </template>
 
 <script>
+import { date } from '../methods/filters';
 import modalMixin from '../mixins/modalMixin';
 
 export default {
@@ -94,6 +137,7 @@ export default {
     };
   },
   methods: {
+    date,
   },
   mixins: [
     modalMixin,
