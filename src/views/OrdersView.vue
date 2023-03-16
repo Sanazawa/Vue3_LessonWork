@@ -45,6 +45,7 @@
   </table>
   <Pagination
     :pages="pagination"
+    @emit-pages="getOrders"
   ></Pagination>
   <OrderModal
     ref="orderModal"
@@ -81,8 +82,8 @@ export default {
   inject: ['$httpMessageState'],
   methods: {
     date,
-    getOrders() {
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/orders`;
+    getOrders(page = 1) {
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/orders?page=${page}`;
       this.$http.get(api, this.user).then((res) => {
         this.orders = res.data.orders;
         this.pagination = res.data.pagination;

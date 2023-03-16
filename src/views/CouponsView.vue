@@ -47,7 +47,10 @@
       </tr>
     </tbody>
   </table>
-  <Pagination :pages="pagination" :emit-pages="getCoupons"></Pagination>
+  <Pagination
+    :pages="pagination"
+    @emit-pages="getCoupons"
+  ></Pagination>
   <CouponModal
     ref="couponModal"
     :coupon="tempCoupon"
