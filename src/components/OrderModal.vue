@@ -77,9 +77,9 @@
                     <th scope="row">下單時間</th>
                     <td>{{ date(tempOrder.create_at) }}</td>
                   </tr>
-                  <tr>
+                  <tr v-if="tempOrder.is_paid">
                     <th scope="row">付款時間</th>
-                    <td></td>
+                    <td>{{ date(tempOrder.paid_date) }}</td>
                   </tr>
                   <tr>
                     <th scope="row">付款狀態</th>

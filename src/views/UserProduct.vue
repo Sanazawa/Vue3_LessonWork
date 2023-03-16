@@ -53,7 +53,7 @@ export default {
   methods: {
     getProductInfo() {
       this.isLoading = true;
-      this.productId = this.$route.params.id;
+      this.productId = this.$route.params.productId;
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/product/${this.productId}`;
 
       this.$http.get(api).then((res) => {

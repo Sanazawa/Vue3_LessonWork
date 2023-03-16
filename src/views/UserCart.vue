@@ -320,7 +320,9 @@ export default {
       const order = this.form;
 
       this.$http.post(url, { data: order }).then((res) => {
-        console.log(res);
+        if (res.data.success) {
+          this.$router.push(`/user/checkout/${res.data.orderId}`);
+        }
       });
     },
   },

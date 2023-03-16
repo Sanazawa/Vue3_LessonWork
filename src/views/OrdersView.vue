@@ -1,4 +1,5 @@
 <template>
+  <PageLoading :active="isLoading"></PageLoading>
   <table class="table mt-4">
     <thead>
       <tr>
@@ -84,21 +85,26 @@ export default {
     date,
     getOrders(page = 1) {
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/orders?page=${page}`;
+      this.isLoading = true;
+
       this.$http.get(api, this.user).then((res) => {
         this.orders = res.data.orders;
         this.pagination = res.data.pagination;
+        this.isLoading = false;
         console.log(res.data);
       });
     },
     deleteOrder() {
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/order/${this.tempOrder.id}`;
       const delComponent = this.$refs.delModal;
+      this.isLoading = true;
 
       this.$http.delete(api).then((res) => {
         console.log(res);
         this.getOrders();
         this.$httpMessageState(res, '刪除訂單');
         delComponent.hideModal();
+        this.isLoading = false;
       });
     },
     openModal(isNew, item) {
